@@ -1,16 +1,16 @@
 import { useState, useMemo } from "react";
 
 const INITIAL_QUEUE = [
-  { id: 1, title: "Lenny's Podcast – Como PMs constroem roadmaps sem data", format: "Podcast", category: "Carreira & Produto", context: "Deslocamento", status: "Na fila" },
-  { id: 2, title: "How Duolingo's PM team runs discovery", format: "Artigo", category: "Carreira & Produto", context: "Pausa curta", status: "Na fila" },
-  { id: 3, title: "Rotina de skincare para o inverno – pele oleosa", format: "TikTok", category: "Estilo de vida", context: "Pausa curta", status: "Na fila" },
-  { id: 4, title: "Como a guerra tarifária está mudando o varejo brasileiro", format: "YouTube", category: "Mundo", context: "Foco longo", status: "Na fila" },
-  { id: 5, title: "Inspired – Marty Cagan (cap. 12 a 18)", format: "PDF / Livro", category: "Carreira & Produto", context: "Foco longo", status: "Na fila" },
-  { id: 6, title: "Newsletter Substack – PM Letter #34", format: "Artigo", category: "Carreira & Produto", context: "Pausa curta", status: "Na fila" },
-  { id: 7, title: "Mini-cápsula de inverno com peças que já tenho", format: "YouTube", category: "Estilo de vida", context: "Foco longo", status: "Na fila" },
-  { id: 8, title: "O que é IA generativa – explicado sem tecniquês", format: "YouTube", category: "Mundo", context: "Pausa curta", status: "Em espera" },
-  { id: 9, title: "Jobs to Be Done na prática – Intercom Blog", format: "Artigo", category: "Carreira & Produto", context: "Pausa curta", status: "Em espera" },
-  { id: 10, title: "The Product Strategy Stack – Reforge", format: "Artigo", category: "Carreira & Produto", context: "Foco longo", status: "Concluído" },
+  { id: 1, title: "Lenny's Podcast – Como PMs constroem roadmaps sem data", format: "Podcast", category: "Carreira & Produto", context: "Deslocamento", status: "Na fila", link: "" },
+  { id: 2, title: "How Duolingo's PM team runs discovery", format: "Artigo", category: "Carreira & Produto", context: "Pausa curta", status: "Na fila", link: "" },
+  { id: 3, title: "Rotina de skincare para o inverno – pele oleosa", format: "TikTok", category: "Estilo de vida", context: "Pausa curta", status: "Na fila", link: "" },
+  { id: 4, title: "Como a guerra tarifária está mudando o varejo brasileiro", format: "YouTube", category: "Mundo", context: "Foco longo", status: "Na fila", link: "" },
+  { id: 5, title: "Inspired – Marty Cagan (cap. 12 a 18)", format: "PDF / Livro", category: "Carreira & Produto", context: "Foco longo", status: "Na fila", link: "" },
+  { id: 6, title: "Newsletter Substack – PM Letter #34", format: "Artigo", category: "Carreira & Produto", context: "Pausa curta", status: "Na fila", link: "" },
+  { id: 7, title: "Mini-cápsula de inverno com peças que já tenho", format: "YouTube", category: "Estilo de vida", context: "Foco longo", status: "Na fila", link: "" },
+  { id: 8, title: "O que é IA generativa – explicado sem tecniquês", format: "YouTube", category: "Mundo", context: "Pausa curta", status: "Em espera", link: "" },
+  { id: 9, title: "Jobs to Be Done na prática – Intercom Blog", format: "Artigo", category: "Carreira & Produto", context: "Pausa curta", status: "Em espera", link: "" },
+  { id: 10, title: "The Product Strategy Stack – Reforge", format: "Artigo", category: "Carreira & Produto", context: "Foco longo", status: "Concluído", link: "" },
 ];
 
 const INITIAL_PROFILES = [
@@ -165,7 +165,7 @@ function QueueSection({ items, setItems }) {
   const [filter, setFilter] = useState("Na fila");
   const [catFilter, setCatFilter] = useState("Todas");
   const [modal, setModal] = useState(false);
-  const [form, setForm] = useState({ title:"", format:"Podcast", category:"Carreira & Produto", context:"Deslocamento", status:"Na fila" });
+  const [form, setForm] = useState({ title:"", format:"Podcast", category:"Carreira & Produto", context:"Deslocamento", status:"Na fila", link:"" });
 
   const counts = {
     "Na fila": items.filter(i => i.status === "Na fila").length,
@@ -182,7 +182,7 @@ function QueueSection({ items, setItems }) {
   function save() {
     if (!form.title.trim()) return;
     setItems(p => [...p, { ...form, id: Date.now() }]);
-    setForm({ title:"", format:"Podcast", category:"Carreira & Produto", context:"Deslocamento", status:"Na fila" });
+    setForm({ title:"", format:"Podcast", category:"Carreira & Produto", context:"Deslocamento", status:"Na fila", link:"" });
     setModal(false);
   }
 
@@ -230,7 +230,14 @@ function QueueSection({ items, setItems }) {
               <div style={{ flex:1, minWidth:0 }}>
                 <div style={{ fontSize:13, fontWeight:600, color:"#111827", lineHeight:1.4,
                   marginBottom:7, overflow:"hidden", display:"-webkit-box",
-                  WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>{item.title}</div>
+                  WebkitLineClamp:2, WebkitBoxOrient:"vertical" }}>
+                  {item.link ? (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer"
+                      style={{ color:"#4F46E5", textDecoration:"none" }}>
+                      {item.title} <span style={{ fontSize:10 }}>↗</span>
+                    </a>
+                  ) : item.title}
+                </div>
                 <div style={{ display:"flex", flexWrap:"wrap", gap:5 }}>
                   <CatPill cat={item.category} />
                   <Chip label={`${CTX_ICON[item.context]} ${item.context}`} />
@@ -259,6 +266,10 @@ function QueueSection({ items, setItems }) {
           <Field label="Título">
             <input value={form.title} onChange={e => setForm(f=>({...f,title:e.target.value}))}
               placeholder="Nome do conteúdo..." style={inputCss} />
+          </Field>
+          <Field label="Link (opcional)">
+            <input value={form.link} onChange={e => setForm(f=>({...f,link:e.target.value}))}
+              placeholder="https://..." style={inputCss} />
           </Field>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
             <Field label="Formato">
